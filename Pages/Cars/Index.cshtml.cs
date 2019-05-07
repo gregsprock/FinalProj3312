@@ -26,6 +26,7 @@ namespace RazorPagesCar.Pages_Cars
         public SelectList Models { get; set; }
         [BindProperty(SupportsGet = true)]
         public string CarMake { get; set; }
+        [BindProperty(SupportsGet = true)]
         public string CarModel { get; set; }
         public string noReviews { get; set; }
         public List<RazorPagesCar.Models.Review> Reviews {get; set;}
@@ -40,7 +41,7 @@ namespace RazorPagesCar.Pages_Cars
         public async Task OnGetAsync()
         {
             IQueryable<string> makeQuery = _context.Car.OrderBy(m => m.Make).Select(m => m.Make);
-            // IQueryable<string> modelQuery = _context.Car.OrderBy(m => m.Model).Select(m => m.Model);
+            IQueryable<string> modelQuery = _context.Car.OrderBy(m => m.Model).Select(m => m.Model);
 
             var cars = _context.Car.Select(m => m);
 
@@ -54,12 +55,12 @@ namespace RazorPagesCar.Pages_Cars
                 cars = cars.Where(x => x.Make == CarMake);
             }
 
-            // if (!string.IsNullOrEmpty(CarModel))
-            // {
-            //     cars = cars.Where(x => x.Model == CarModel);
-            // }
+            if (!string.IsNullOrEmpty(CarModel))
+            {
+                cars = cars.Where(x => x.Make == CarMake && x.Model == CarModel);
+            }
             Makes = new SelectList(await makeQuery.Distinct().ToListAsync());
-            // Models = new SelectList(await modelQuery.Distinct().ToListAsync());
+            Models = new SelectList(await modelQuery.Distinct().ToListAsync());
             Car = await cars.Include(r => r.Reviews).ToListAsync();
 
             noReviews = "N/A";
