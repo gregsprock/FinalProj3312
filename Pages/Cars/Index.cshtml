@@ -1,0 +1,117 @@
+@page 
+@model RazorPagesCar.Pages_Cars.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+
+<form>
+    <p>
+        Make: <select asp-for="CarMake" asp-items="Model.Makes">
+            <option value="">All</option>
+        </select>
+        <!-- Model: <select asp-for="CarModel" asp-items="Model.Models">
+            <option value="">All</option>
+        </select> -->
+        Model: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @{
+                    var makeSort = "make_asc";
+                    if (Model.CurrentSort == "make_asc")
+                    {
+                        makeSort = "make_desc";
+                    }
+                }
+                <a asp-page="./Index" asp-route-CurrentSort="@makeSort" asp-route-PageNum="@(Model.PageNum)">@Html.DisplayNameFor(model => model.Car[0].Make)</a>
+            </th>
+            <th>
+                @{
+                    var modelSort = "model_asc";
+                    if (Model.CurrentSort == "model_asc")
+                    {
+                        modelSort = "model_desc";
+                    }
+                }
+                <a asp-page="./Index" asp-route-CurrentSort="@modelSort" asp-route-PageNum="@(Model.PageNum)">@Html.DisplayNameFor(model => model.Car[0].Model)</a>
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Car[0].NumberOfDoors)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Car[0].Cylinders)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Car[0].Reviews)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Car) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Make)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Model)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberOfDoors)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cylinders)
+            </td>
+            <td>
+                @try
+                {
+                    @item.Reviews.Average(r => r.CustReview).ToString("0.00")
+                }
+                catch
+                {
+                    @Model.noReviews
+                }
+            </td>
+
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.ID">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.ID">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.ID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<hr />
+@{
+    var prevDisabled = "";
+    if (Model.PageNum <= 1) {
+        prevDisabled = "disabled";
+    }
+
+    var nextDisabled = "";
+    if (Model.PageNum >= Model.NumPages)  {
+        nextDisabled = "disabled";
+    }
+    
+}
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item @prevDisabled"><a class="page-link" asp-page="./Index" asp-route-PageNum="@(Model.PageNum - 1)" asp-route-CurrentSort="@(Model.CurrentSort)">Previous</a></li>
+    <li class="page-item disabled"><a class="page-link" href="#">@Model.PageNum  -  @Model.NumPages</a></li>
+    <li class="page-item @nextDisabled"><a class="page-link" asp-page="./Index" asp-route-PageNum="@(Model.PageNum + 1)" asp-route-CurrentSort="@(Model.CurrentSort)">Next</a></li>
+  </ul>
+</nav>
