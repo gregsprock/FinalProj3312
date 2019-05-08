@@ -65,21 +65,21 @@ namespace RazorPagesCar.Pages_Cars
 
             noReviews = "N/A";
 
-            var query = _context.Car.Select(p => p);
+            // var query = _context.Car.Select(p => p);
 
             switch (CurrentSort)
             {
                 case "make_asc":
-                    query = query.OrderBy(p => p.Make);
+                    cars = cars.OrderBy(p => p.Make);
                     break;
                 case "make_desc":
-                    query = query.OrderByDescending(p => p.Make);
+                    cars = cars.OrderByDescending(p => p.Make);
                     break;
                 case "model_asc":
-                    query = query.OrderBy(p => p.Model);
+                    cars = cars.OrderBy(p => p.Model);
                     break;
                 case "model_desc":
-                    query = query.OrderByDescending(p => p.Model);
+                    cars = cars.OrderByDescending(p => p.Model);
                     break;
             }
 
@@ -93,7 +93,7 @@ namespace RazorPagesCar.Pages_Cars
                 NumPages = (carCount / PageSize) + 1;
             }
 
-            Car = await query.Skip((PageNum-1)*PageSize).Take(PageSize).ToListAsync();
+            Car = await cars.Skip((PageNum-1)*PageSize).Take(PageSize).ToListAsync();
         }
     }
 }
