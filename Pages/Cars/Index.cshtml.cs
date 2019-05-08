@@ -41,7 +41,7 @@ namespace RazorPagesCar.Pages_Cars
         public async Task OnGetAsync()
         {
             IQueryable<string> makeQuery = _context.Car.OrderBy(m => m.Make).Select(m => m.Make);
-            IQueryable<string> modelQuery = _context.Car.OrderBy(m => m.Model).Select(m => m.Model);
+            IQueryable<string> modelQuery = _context.Car.Include(ma => ma.Make).OrderBy(m => m.Model).Select(m => m.Model); //Added .Include() hoping to get Make in
 
             var cars = _context.Car.Select(m => m);
 
@@ -57,10 +57,10 @@ namespace RazorPagesCar.Pages_Cars
 
             if (!string.IsNullOrEmpty(CarModel))
             {
-                cars = cars.Where(x => x.Make == CarMake && x.Model == CarModel);
+                cars = cars.Where(x => x.Make == CarMake && x.Model == CarModel);  //Tyring to get the second drop down to go in with &&
             }
             Makes = new SelectList(await makeQuery.Distinct().ToListAsync());
-            Models = new SelectList(await modelQuery.Distinct().ToListAsync());
+            Models = new SelectList(await modelQuery.Where(x => x.Make == CarMake).Distinct().ToListAsync());  //Tyring to get the second drop down to go in with Where() on modelQuery
             Car = await cars.Include(r => r.Reviews).ToListAsync();
 
             noReviews = "N/A";
