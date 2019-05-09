@@ -13,7 +13,7 @@
 
 <form>
     <p>
-        Make: <select asp-for="CarMake" asp-items="Model.Makes">
+        Make: <select asp-for="CarMake" asp-items="Model.Makes">   <!--onchange="myFunction()" -- This would go in the '>' bracket-->
             <option value="">All</option>
         </select>
         Model: <select asp-for="CarModel" asp-items="Model.Models">
@@ -115,3 +115,29 @@
     <li class="page-item @nextDisabled"><a class="page-link" asp-page="./Index" asp-route-PageNum="@(Model.PageNum + 1)" asp-route-CurrentSort="@(Model.CurrentSort)">Next</a></li>
   </ul>
 </nav>
+
+<!-- <script>
+
+    function myFunction()
+
+    {
+        // This function is called when the user changes the value of the CarMake drop down
+        var filterByValue = $("#CarMake option:selected").text(); // Pick up the Car Make selected by the user (BMW, Ford, etc...)
+        // Perform an AJAX call back to the server. AJAX calls happen behind the scenes without reloading the page
+        // This is like the auto-submit
+
+        $.ajax({
+            url: '/Cars?handler=Filter',
+            data: {
+                CarMake: filterByValue
+        })
+
+        .done(function(result) // When the server returns a response, change the CarModel dropdown
+        {
+            $('#CarModel option:gt(0)').remove(); // remove all options except the first
+            $.each(result, function(key, value) {
+                $("#CarModel").append($("<option></option>").attr("value", value).text(value));
+            });
+        })
+    }
+</script> -->

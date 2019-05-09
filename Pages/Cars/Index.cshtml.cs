@@ -41,7 +41,7 @@ namespace RazorPagesCar.Pages_Cars
         public async Task OnGetAsync()
         {
             IQueryable<string> makeQuery = _context.Car.OrderBy(m => m.Make).Select(m => m.Make);
-            IQueryable<string> modelQuery = _context.Car.Include(ma => ma.Make).OrderBy(m => m.Model).Select(m => m.Model); //Added .Include() hoping to get Make in
+            IQueryable<string> modelQuery = _context.Car.OrderBy(m => m.Model).Select(m => m.Model);
 
             var cars = _context.Car.Select(m => m);
 
@@ -57,16 +57,14 @@ namespace RazorPagesCar.Pages_Cars
 
             if (!string.IsNullOrEmpty(CarModel))
             {
-                cars = cars.Where(x => x.Make == CarMake && x.Model == CarModel);  //Tyring to get the second drop down to go in with &&
+                cars = cars.Where(x => x.Make == CarMake && x.Model == CarModel);
             }
             Makes = new SelectList(await makeQuery.Distinct().ToListAsync());
-            Models = new SelectList(await modelQuery.Where(x => x.Make == CarMake).Distinct().ToListAsync());  //Tyring to get the second drop down to go in with Where() on modelQuery
+            Models = new SelectList(await modelQuery.Distinct().ToListAsync());
             Car = await cars.Include(r => r.Reviews).ToListAsync();
 
             noReviews = "N/A";
-
-            // var query = _context.Car.Select(p => p);
-
+            
             switch (CurrentSort)
             {
                 case "make_asc":
@@ -95,5 +93,16 @@ namespace RazorPagesCar.Pages_Cars
 
             Car = await cars.Skip((PageNum-1)*PageSize).Take(PageSize).ToListAsync();
         }
+
+        // public JsonResult OnGetFilter(string CarMake)
+        // {
+        //     IQueryable<string> modelQuery = _context.Car.OrderBy(m => m.Make).Select(m => m.Make);
+
+        //     var cars = _context.Car.Select(m => m);
+
+        //     // Place code here that gets a list of all the car models for the CarMake
+        //     Models = new SelectList(modelQuery.Where(x => x.Make == CarMake).Distinct().ToListAsync());
+        //     return new JsonResult(Models);
+        // }
     }
 }
